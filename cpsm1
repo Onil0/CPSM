@@ -8,13 +8,11 @@ if (!require(moments)) {
 
 library(moments)
 #PROBLEMA: Si vuole analizzare il costo del gasolio degli ultimi 10 anni.
-#I dati presi in considerazione tengono conto della media del costo mensile del gasolio 
-#relativo agli ultimi 10 anni considerando il periodo: Maggio 2013 - Maggio 2023
+#I dati presi in considerazione tengono conto della media del costo mensile del gasolio relativo agli ultimi 10 anni considerando il periodo: Maggio 2013 - Maggio 2023
 #Lo storico dei dati è stato reperito al seguente link: https://www.rivaluta.it/prezzi/prezzi-carburanti-italia.asp
 #Per convenienza e miglior lettura i dati sono stati approsimati a 2 cifre (rispetto ai dati riportati sul sito).
 #taglia campione: n = 121
 
-#caricamento campione dei dati
 gasolio<-c(1.61, 1.63, 1.64, 1.66, 1.68, 1.66, 1.64, 1.66, 1.65, 1.64, 1.63, 1.63, 
            1.63, 1.63, 1.64, 1.62, 1.61, 1.59, 1.55, 1.49, 1.39, 1.40, 1.46, 1.45, 
            1.48, 1.48, 1.45, 1.40, 1.36, 1.35, 1.34, 1.31, 1.23, 1.19, 1.23, 1.24, 
@@ -30,198 +28,116 @@ gasolio<-c(1.61, 1.63, 1.64, 1.66, 1.68, 1.66, 1.64, 1.66, 1.65, 1.64, 1.63, 1.6
 
 # CALCOLO DELLE FREQUENZE ASSOLUTE E RELATIVE
 
-#frequenze assolute:
-#rappresenta quante volte compare la modalità Vi nel campione.
-#È compresa tra 0 e la taglia del campione (0 ≤ fi ≤ n) e se sommiamo
-#tutte le frequenze restituiscono la taglia del campione.
 table(gasolio) 
 
 #frequenze relative (approssimazione a 3 cifre):
-#rappresenta il rapporto tra frequenza assoluta e ampiezza del
-#campione. La frequeza relativa è sempre compreso tra 0 e 1
-#(0 ≤ pi ≤ 1) e dalla somma di tutte le frequenze relative si ottiene 1
+
 round(table(gasolio)/length(gasolio),3) 
-# in alternativa si può usare round(proportions(table(gasolio)),3)
+
 
 #frequenze assolute cumulate:
-#rappresenta la somma di tutte le frequenze assolute fino
-#alla modalità iesima. 
+
 cumsum(table(gasolio))
 
 #frequenze relative cumulate (approssimazione a 3 cifre):
-#rappresenta la somma di tutte le frequenze relative fino
-#alla modalità iesima.
+
 round(cumsum(table(gasolio)/length(gasolio)),3) 
 
 #CACOLO DELLE MODALITÀ DEL CARATTERE
-#si va a rappresentare graficamente la distribuzione delle frequenze
-#di un campione di dati (in questo caso con un grafico ad aste).
-#plot con frequenze assolute e modifica label asse y e aggiunta colori
+
 plot(table(gasolio), col=1:50, ylab="fr. ass. costo")
-#plot con frequenze relative e modifica label asse y e aggiunta colori
+
+#plot con frequenze relative
+
 plot(table(gasolio)/length(gasolio), col=1:50, ylab="fr. rel costo")
 
 
 #DISEGNO ISTOGRAMMA RELATIVO AI DATI
 
-#variabile quantitativa per calcolare le frequenze di classi
-#breaks permette di elencare gli estremi sinistri degli intervalli che si considerano
-#teniamo conto di intervalli chiusi a sinistra ed aperti a destra 
-#specificando in cut() l'opzione right=FALSE
 table(cut(gasolio,breaks=c(1.1,1.21,1.31,1.41,1.51,1.61,1.71,1.81,2.1), right=FALSE))
-#per intervalli non chiusi a sinistra e aperti a destra usare:
-#table(cut(gasolio,breaks=c(1.1,1.21,1.31,1.41,1.51,1.61,1.71,1.81,2.1)))
-
-#ISTOGRAMMA (grafico a barre delle frequenze delle classi)
-#I dati in ingresso vengono divisi in classi: bisogna sceglierne
-#però il corretto numero. Solitamente i valori tipici per le classi sono
-#tra 5 e 10 (un altro criterio è scegliere numero classi = √campione)
-#N.B: in una classe ci devono essere almeno 5 dati.
-#(per far comparire le frequenze relative occorre specificare in hist() freq=FALSE)
 brk<-c(1.1,1.21,1.31,1.41,1.51,1.61,1.71,1.81,2.1)
 hist(gasolio, breaks=brk,main="Istogramma")
-#in questo modo viene prodotto un istogramma con classi non equiampie, 
-#cioè sull'asse delle ordinate compare la funzione intesità 
-#(frequenza relativa / ampiezza classe) e non le frequenze.
 
 
+#CALCOLO INDICI DI POSIZIONE
 
-#CALCOLO INDICI DI POSIZIONE: consentono di sintetizzare i dati osservati x1,....,xn
-#con un solo valore numerico che sia rappresentativo dei dati stessi.
-#Gli indici di posizione sono: media, moda e mediana
-
-#calcolo della media (media campionaria): rappresenta la tendenza centrale,
-#cioè in media il valore assunto da quella variabile (da sola non basta)
 media<-mean(gasolio)
 media
 
-#calcolo della moda: rappresenta la frequenza che compare il 
-#maggior numero di volte (se si ha una distribuzione per classi
-#si parla di classe modale). Essa può essere unimodale o bimodale.
-#In R non esiste una funzione per calcolare la moda ma si può 
-#usare una funzione opportuna:
 getmode<-function(v){
   uniqv<-unique(v) # crea un vettore senza duplicati
   uniqv[which.max(tabulate(match(v,uniqv)))]
 }
-#calcoliamo la moda utilizzando la funzione getmode
 moda<-getmode(gasolio)
 moda
 
-#calcolo della mediana: rappresenta il centro di un insieme di dati,
-#cioè il valore centrale dei dati riordinati in senso crescente.
-#(a differenza della media, non soffre i valori anomali)
+
 mediana<-median(gasolio)
 mediana
 
+
 #calcolo dei quartili: dividono in 4 parti il nostro set di dati
-#si dividono in
-#Q1(primo quartile): 25% dei dati è più piccolo e il 75% più grande
-#Q2(secondo quartile): corrisponde alla mediana (50% e 50%)
-#Q3(terzo quartile): 75% dei dati è più piccolo e il 25% più grande
-quantili<-quantile(gasolio)
-quantili
+
+quartili<-quantile(gasolio)
+quartili
 
 #è possibile sintetizzare tutti i risultati ottenuti mostrando
 #minimo, massimo, primo quartile, media, mediana, secondo quartile
 #e terzo quartile attraverso la funzione summary().
+
 indiciDiPosizioneEQuartili<-summary(gasolio)
 indiciDiPosizioneEQuartili
 
 
 
-#CALCOLO INDICI DI DISPERSIONE: consentono di valutare l'informazione
-#fornita dall'indice di posizione adoperato, dando una descrizione
-#più accurata della struttura dati.
-#I più usati sono:varianza, deviazione standard e coefficiente di variazione
+#CALCOLO INDICI DI DISPERSIONE:
 
-#calcolo della varianza(o varianza campionaria): stabilisce quanto i dati siano 
-#concentrati o dispersi attorno a valori tipici, cioè si elevano al quadrato le distanze
-#dei dati dalla media campionaria e poi ne viene fatta la media aritmetica.
-#essa si indica con s^2= 1/n-1 per la sommatoria i=1 a n per xi-media campionaria al quadrato
-#in R vi è la funzione var() che ne permette il calcolo
 varianza<-var(gasolio)
 varianza
 
-#calcolo della deviazione standard: rappresenta la radice quadrata della 
-#varianza campionaria.
-#si indica con s
-#in R vi è la funzione sd() che ne permette il calcolo
+#calcolo della deviazione standard: rappresenta la radice quadrata della varianza campionaria.
+
 deviazioneStandard<-sd(gasolio)
 deviazioneStandard
 
 
 
-#CALCOLO INDICI DI FORMA: misurano caratteristiche relative alla forma
-#della distribuzione dei dati. I più usati sono: curtosi e asimmetria(skewness)
+#CALCOLO INDICI DI FORMA: misurano caratteristiche relative alla forma della distribuzione dei dati. I più usati sono: curtosi e asimmetria(skewness)
 
-#calcolo asimmetria (o skewness): si usa per stabilire se i dati sono
-#caratterizzati da simmetria centrale:
-#skewness > 0: asimmetria positiva -> distribuzione con coda più lunga a destra
-#skewness < 0: asimmetria negativa -> distribuzione con coda più lunga a sinistra
-#calcolo skewness senza funzione di libreria
 n<-length(gasolio)
 skewness<-sum((gasolio-media)^3)/(n*var(gasolio)^(3/2))
 skewness
+
 #nel caso in considerazione, vi è un assimetria positiva con una distribuzione con coda più lunga a destra
 
-#la skwness si indica con gamma=1/s^3 per 1/n per la sommatoria xi-media campionaria al cubo
-#la skewness si può calcolare attraverso la funziona della libreria
-# library(moments), chiamata skewness() come segue:
 skewnessConFunzione<-skewness(gasolio)
 skewnessConFunzione
 
-#calcolo indice di curtosi: si usa per stabilire se la distribuzione
-#è poco o molto appiattita:
-#curtosi > 0: distr. leptocurtica -> picco nelle classi centrali
-#curtosi < 0: distr. platicurtica -> carenza dati al centro
-#curtosi = 0: distr. normocurtica -> andamento simile al normale
-#la cutosi di indica con k=[1/s^4 per 1/n per la sommatoria di xi-mediacampionaria alla 4]-3
-#la curtosi si può calcolare attraverso la funziona della libreria
-# library(moments) chiamata kurtosis(), come segue:
+#calcolo indice di curtosi: si usa per stabilire se la distribuzione è poco o molto appiattita:
+
 curtosiConFunzione<-kurtosis(gasolio)
 curtosiConFunzione
-
-#nel caso in considerazione, vi è una distribuzione leptocurtica con una carenza dati al centro
 
 
 
 
 
 #DISEGNO BOX PLOT DEI DATI
-#il box plot visualizza alcuni degli indici rappresentativi dei dati
-#quali: minimo, massimo, mediana, primo e terzo quartile.
-#Si ottiene sovrapponendo una ad una linea orizzontale (o verticale) che
-#va dal minore al maggiore dei dati, un rettangolo che va dal primo al terzo quartile
-#con una linea verticale che lo divide al livello del secondo quartile.
-#Inoltre permettono di identificare rapidamente:
-#1) mediana
-#2) dispersione del set di dati
-#3) segni di asimmetria(simmetria sinistra, simmetria o simmetria destra)
 
-#calcoliamo prima i cardini: vengono calcolati perchè sono utili a vedere se sono
-#presenti gli outlier, cioè valori estremamente grandi o estremamente piccoli,
-#(chiamati anche valori anomali).
 #(estremo inferiore)
+
 cardine1<-quantile(gasolio)[[2]]-1.5*(quantile(gasolio)[[4]]-quantile(gasolio)[[2]])
 cardine1
 #(estremo superiore) 
+
 cardine2<-quantile(gasolio)[[4]]+1.5*(quantile(gasolio)[[4]]-quantile(gasolio)[[2]])
 cardine2
 
-#individuiamo i valori definiti come outlier
-#defininiamo un nuovo vettore in cui:
-#se il costo del gasolio è minore del cardine1 o 
-#maggiore del cardine2 inserisco 0 
-#se il costo del gasolio è maggiore del cardine1 o 
-#minore del cardine2 inserisco il costo del gasolio
-#usiamo il blocco ifelse per le condizioni e quindi per la selezione dei valori.
 gasolioNuovo<-ifelse((gasolio<cardine1)|(gasolio>cardine2),0,gasolio)
 gasolioNuovo
 
-#disegno del box plot con la label e il colore
-#nel caso in cui vi è la presenza di dati anomali, saranno disegnati 
-#gli outlier all'esterno del "baffo" (estremo inferiore o superiore) del box plot
+#rappresentazione
+
 boxplot(gasolio,xlab="costo della gasolio",col="green")
-#nel caso in considerazione, non vi sono dati anomali, quindi non ci sono 
-#"puntini" all'esterno del box plot.
+
+
